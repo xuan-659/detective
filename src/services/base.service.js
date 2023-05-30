@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '@/utils/request';
 import { objCleanEmpty, objValueTrim } from '@/utils';
 
 export default class BaseService {
@@ -13,9 +13,10 @@ export default class BaseService {
   }
 
   // 提供post请求
-  static async post(url, postData, clearEmptyData = true) {
-    postData = clearEmptyData ? objCleanEmpty(objValueTrim(postData)) : objValueTrim(postData);
-    return axios.post(url, postData);
+  static async post(url, postData, config) {
+    // postData = clearEmptyData ? objCleanEmpty(objValueTrim(postData)) : objValueTrim(postData);
+    console.log('postData', postData);
+    return axios.post(url, postData, config);
   }
 
   // 提供patch请求

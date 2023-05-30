@@ -4,6 +4,8 @@ export const authToken = 'token';
 export const authMobile = '';
 export const authEmail = 'auth-email';
 export const currentUser = 'current-user';
+export const defaultImageUrl =
+  'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
 
 // token 时间戳
 export const TIME_STAMP = 'timeStamp';

@@ -24,36 +24,39 @@ const clearLoading = () => {
 class Request {
   constructor() {
     // 基础的配置
-    axios.defaults = {
+    // axios.defaults.headers['ccc'] = 1
+    // axios.defaults.headers.post['Content-Type'] = 'multipart/form-data'
+    // axios.defaults.timeout = 5 * 1000
+    this.axiosInstance = axios.create({
       headers: {
-        post: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-        },
+        'Content-Type': 'multipart/form-data',
       },
-      timeout: 20 * 1000, // 请求超时时间
+      baseURL: prefix,
+      timeout: 5 * 1000, // 请求超时时间
       withCredentials: true, // 设置跨域
       // 数据转换
-      transformRequest: [
-        (data) => {
-          // 对 data 进行任意转换处理
-          let ret = '';
-          for (const it in data) {
-            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
-          }
-          ret = ret.substring(0, ret.length - 1);
-          return ret;
-        },
-      ],
-    };
+      // transformRequest: [
+      //   (data) => {
+      //     // 对 data 进行任意转换处理
+      //     let ret = '';
+      //     for (const it in data) {
+      //       ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+      //     }
+      //     ret = ret.substring(0, ret.length - 1);
+      //     return ret;
+      //   },
+      // ],
+    });
+
     // 拦截请求的
-    axios.interceptors.request.use(
+    this.axiosInstance.interceptors.request.use(
       (config) => this.request(config),
       (error) => this.requestError(error)
     );
     // 拦截响应
-    axios.interceptors.response.use(
+    this.axiosInstance.interceptors.response.use(
       (res) => this.response(res),
-      (error) => this.responseError(error)
+      (error) => this.requestError(error)
     );
   }
   /**
@@ -72,17 +75,14 @@ class Request {
       config.headers[authToken] = token;
     }
     // 配置请求头
-    config.headers['X-Origin'] = 'admin-admin';
+    console.log('config', config);
     if (!config.headers['Content-Type']) {
-      if (typeof config.data == 'string') {
-        config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      } else {
-        config.headers['Content-Type'] = 'application/json;charset=UTF-8';
-      }
+      config.headers['Content-Type'] = this.axiosInstance.defaults.headers['Content-Type'];
     }
     // 处理请求地址
     const input = config.url;
-    config.url = `${prefix}${input}`;
+    config.url = `${config.baseURL}${input}`;
+
     // 处理缓存
     config = this.delBrowserCache(config);
     // 判断加载中
@@ -103,67 +103,67 @@ class Request {
     const { url, method, data } = response.config;
     if ((status >= 200 && status < 300) || status === 304) {
       // 单独处理文件下载开始
-      if (/application\/x-msdownload/.test(response.headers['content-type'])) {
-        // 文件下载
-        const url = window.URL.createObjectURL(new Blob([data]));
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        link.setAttribute('download', decodeURIComponent(response.headers['download'])); // 文件名
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // 下载完成移除元素
-        window.URL.revokeObjectURL(url); // 释放掉blob对象
-      } else if (response.headers['content-type'] === 'application/zip') {
-        // 文件流下载
-        const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip;' }));
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        link.setAttribute(
-          'download',
-          decodeURIComponent(response.headers['content-disposition']).match(/filename=(.*\.zip)/)[1]
-        ); // 文件名
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // 下载完成移除元素
-        window.URL.revokeObjectURL(url); // 释放掉blob对象
-      } else if (/ms-excel/.test(response.headers['content-type'])) {
-        // excel文件下载
-        const url = window.URL.createObjectURL(
-          new Blob([data], { type: 'application/vnd.ms-excel;' })
-        );
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        link.setAttribute(
-          'download',
-          decodeURIComponent(response.headers['content-disposition']).match(
-            /filename=(.*\.xlsx)/
-          )[1]
-        ); // 文件名
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // 下载完成移除元素
-        window.URL.revokeObjectURL(url); // 释放掉blob对象
-      } else if (/application\/octet-stream/.test(response.headers['content-type'])) {
-        // octet-stream文件下载
-        const url = window.URL.createObjectURL(new Blob([data]));
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        const disposition = decodeURIComponent(response.headers['content-disposition']);
-        link.setAttribute('download', disposition.split('=')[1]); // 文件名
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // 下载完成移除元素
-        window.URL.revokeObjectURL(url); // 释放掉blob对象
-      }
+      // if (/application\/x-msdownload/.test(response.headers['content-type'])) {
+      //   // 文件下载
+      //   const url = window.URL.createObjectURL(new Blob([data]));
+      //   const link = document.createElement('a');
+      //   link.style.display = 'none';
+      //   link.href = url;
+      //   link.setAttribute('download', decodeURIComponent(response.headers['download'])); // 文件名
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   document.body.removeChild(link); // 下载完成移除元素
+      //   window.URL.revokeObjectURL(url); // 释放掉blob对象
+      // } else if (response.headers['content-type'] === 'application/zip') {
+      //   // 文件流下载
+      //   const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip;' }));
+      //   const link = document.createElement('a');
+      //   link.style.display = 'none';
+      //   link.href = url;
+      //   link.setAttribute(
+      //     'download',
+      //     decodeURIComponent(response.headers['content-disposition']).match(/filename=(.*\.zip)/)[1]
+      //   ); // 文件名
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   document.body.removeChild(link); // 下载完成移除元素
+      //   window.URL.revokeObjectURL(url); // 释放掉blob对象
+      // } else if (/ms-excel/.test(response.headers['content-type'])) {
+      //   // excel文件下载
+      //   const url = window.URL.createObjectURL(
+      //     new Blob([data], { type: 'application/vnd.ms-excel;' })
+      //   );
+      //   const link = document.createElement('a');
+      //   link.style.display = 'none';
+      //   link.href = url;
+      //   link.setAttribute(
+      //     'download',
+      //     decodeURIComponent(response.headers['content-disposition']).match(
+      //       /filename=(.*\.xlsx)/
+      //     )[1]
+      //   ); // 文件名
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   document.body.removeChild(link); // 下载完成移除元素
+      //   window.URL.revokeObjectURL(url); // 释放掉blob对象
+      // } else if (/application\/octet-stream/.test(response.headers['content-type'])) {
+      //   // octet-stream文件下载
+      //   const url = window.URL.createObjectURL(new Blob([data]));
+      //   const link = document.createElement('a');
+      //   link.style.display = 'none';
+      //   link.href = url;
+      //   const disposition = decodeURIComponent(response.headers['content-disposition']);
+      //   link.setAttribute('download', disposition.split('=')[1]); // 文件名
+      //   document.body.appendChild(link);
+      //   link.click();
+      //   document.body.removeChild(link); // 下载完成移除元素
+      //   window.URL.revokeObjectURL(url); // 释放掉blob对象
+      // }
       // 单独处理文件下载结束
       if (response?.data) {
-        const { code, message, result } = response.data;
-        if (Object.is(code, 0)) {
-          // ElMessage.success(message);
+        const { code, msg: message, data: result } = response.data;
+        if (Object.is(code, 200)) {
+          ElMessage.success(message);
           return Promise.resolve({ code, message, result });
         } else {
           if (code === 10024) {
@@ -317,4 +317,4 @@ class Request {
   }
 }
 
-export const request = new Request();
+export default new Request().axiosInstance;

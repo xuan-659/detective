@@ -1,3 +1,9 @@
+<!--
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-12 14:07:44
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-05-30 21:48:31
+-->
 <template>
   <div class="login-container">
     <el-form class="login-form" :model="loginForm" :rules="loginRules" ref="loginFromRef">
@@ -33,10 +39,17 @@
       </el-form-item>
       <el-button
         type="primary"
-        style="width: 100%; margin-bottom: 30px"
+        style="width: 48%; margin-bottom: 30px"
         :loading="loading"
         @click="handleLogin"
         >{{ $t('login.btn') }}</el-button
+      >
+      <el-button
+        type="info"
+        style="width: 48%; margin-bottom: 30px"
+        :loading="loading"
+        @click="handleForget"
+        >忘记密码</el-button
       >
     </el-form>
   </div>
@@ -49,6 +62,7 @@
   import { validatePassword } from './rule';
   import LangSelect from '@/components/LangSelect';
   import { useI18n } from 'vue-i18n';
+  import { ElMessage } from 'element-plus';
   const loginForm = ref({
     username: 'admin',
     password: '123456',
@@ -92,7 +106,7 @@
     // 1.进行表单验证
     loginFromRef.value.validate((valid) => {
       if (!valid) return;
-
+      console.log(loginForm.value);
       // 2.触发登陆操作
       loading.value = true;
       store
@@ -107,6 +121,10 @@
           loading.value = false;
         });
     });
+  };
+
+  const handleForget = () => {
+    ElMessage.warning('请联系系统管理员');
   };
 </script>
 

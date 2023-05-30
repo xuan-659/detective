@@ -1,3 +1,9 @@
+<!--
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-12 14:07:44
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-05-30 23:25:42
+-->
 <template>
   <div class="navbar">
     <!-- 左侧折叠 -->
@@ -40,8 +46,9 @@
   import LangSelect from '@/components/LangSelect';
   import ThemeSelect from '@/components/ThemeSelect';
   import Screenfull from '@/components/Screenfull';
+  import { defaultImageUrl } from '@/constant/index';
   const store = useStore();
-  const squareUrl = 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
+  const squareUrl = store.getters?.userInfo?.avatar || defaultImageUrl;
   const logout = () => {
     store.dispatch('app/clearTagsView');
     store.dispatch('user/logout');
@@ -55,6 +62,7 @@
     position: relative;
     background: #fff;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+
     .hamburger-container {
       line-height: 46px;
       height: 100%;
@@ -62,25 +70,31 @@
       cursor: pointer;
       // hover 动画
       transition: background 0.5s;
+
       &:hover {
         background: rgba(0, 0, 0, 0.1);
       }
     }
+
     .right-menu {
       display: flex;
       align-items: center;
       float: right;
       padding-right: 16px;
+
       ::v-deep .avatar-container {
         cursor: pointer;
+
         .avatar-wrapper {
           margin-top: 5px;
           position: relative;
+
           .el-avatar {
             margin-right: 12px;
           }
         }
       }
+
       ::v-deep .right-menu-item {
         display: inline-block;
         padding: 0 18px 0 0;

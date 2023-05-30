@@ -1,5 +1,11 @@
+/*
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-12 14:07:44
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-05-30 23:31:32
+ */
 import { setTimeStamp } from '@/utils/auth';
-import { LoginService } from '@/services';
+import { LoginService, RegisterService, userService } from '@/services';
 import router from '@/router';
 
 export default {
@@ -13,6 +19,7 @@ export default {
     // 保存token：保存在vuex和本地localStorage
     setToken(state, token) {
       state.token = token;
+      console.log('token', state.token);
     },
     setUserInfo(state, userInfo) {
       state.userInfo = userInfo;
@@ -23,12 +30,14 @@ export default {
     login(context, userInfo) {
       const { commit } = context;
       const { username, password } = userInfo;
+      // console.log("userInfo", username, password)
       return new Promise((resolve, reject) => {
         LoginService.loginApi({
-          username,
+          username: username,
           password,
         })
           .then((data) => {
+            console.log('data', data);
             const { result } = data;
             commit('setToken', result.token);
             commit('setUserInfo', result);
@@ -51,6 +60,34 @@ export default {
       window.sessionStorage.clear();
       // 退回到登录页面
       router.push('/login');
+    },
+    // 注册用户
+    register(context, userInfo) {
+      const { userName, password } = userInfo;
+      return new Promise((resolve, reject) => {
+        RegisterService.loginApi({
+          userName,
+          password,
+        })
+          .then((data) => {
+            console.log('data', data);
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+
+    // 获取用户信息
+    getUserInfo({ commit }) {
+      return new Promise(() => {
+        userService.getUserInfoApi().then((data) => {
+          const { userInfo } = data?.result;
+          commit('setUserInfo', userInfo);
+        });
+      });
+      // commit('setUserInfo', {});
     },
   },
 };

@@ -1,15 +1,20 @@
+/*
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-12 14:07:44
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-05-30 23:30:20
+ */
 import { createRouter, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
 import store from '@/store';
 import Layout from '@/layout';
 import account from './modules/account';
-import access from './modules/access';
+// import access from './modules/access';
 import role from './modules/role';
-import file from './modules/file';
 import detection from './modules/detection';
 
 // 私有路由
-export const privateRoutes = [account, role, access, file, detection];
+export const privateRoutes = [account, role, detection];
 
 // 公开路由
 export const publicRoutes = [

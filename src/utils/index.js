@@ -6,3 +6,4 @@ export * from './i18n';
 export * from './theme';
 export * from './tags';
 export * from './object';
+export * from './fomdata';

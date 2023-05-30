@@ -15,8 +15,11 @@
 
 <script setup>
   import SidebarMenu from './components/SidebarMenu';
+  import { useStore } from 'vuex';
+  import { defaultImageUrl } from '@/constant/index';
   const logoHeight = 34;
-  const squareUrl = 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
+  const store = useStore();
+  const squareUrl = store.getters?.userInfo?.avatar || defaultImageUrl;
 </script>
 
 <style lang="scss" scoped>
