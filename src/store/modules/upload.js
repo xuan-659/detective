@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-19 15:05:51
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-30 23:30:33
+ * @LastEditTime : 2023-05-31 17:14:05
  */
 import { UploadService, AnalyseService, SelectMsgService } from '@/services/index';
 
@@ -32,7 +32,8 @@ export default {
         })
           .then((data) => {
             console.log('data', data);
-            resolve();
+            const { result } = data;
+            resolve(result[0]);
           })
           .catch((err) => {
             reject(err);
@@ -48,7 +49,7 @@ export default {
         })
           .then((data) => {
             console.log('data', data);
-            resolve();
+            resolve(data.result);
           })
           .catch((err) => {
             reject(err);

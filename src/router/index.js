@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-30 23:30:20
+ * @LastEditTime : 2023-05-31 16:52:58
  */
 import { createRouter, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
@@ -10,11 +10,12 @@ import store from '@/store';
 import Layout from '@/layout';
 import account from './modules/account';
 // import access from './modules/access';
+import user from './modules/user';
 import role from './modules/role';
 import detection from './modules/detection';
 
 // 私有路由
-export const privateRoutes = [account, role, detection];
+export const privateRoutes = [account, role, user, detection];
 
 // 公开路由
 export const publicRoutes = [
@@ -82,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
       if (!store.getters.isLoadMenu) {
         // 处理用户权限，筛选出需要添加的路由
         // 模拟请求后菜单数据
-        const menusList = ['account', 'access', 'file', 'detection'];
+        const menusList = ['account', 'access', 'role', 'user', 'detection'];
         const filterRoutes = await store.dispatch('menu/filterRoutes', menusList);
         // 利用 addRoute 循环添加
         filterRoutes.forEach((item) => {

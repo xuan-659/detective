@@ -75,7 +75,7 @@
       if (valid) {
         console.log(customFormRef.value.formData, '表单数据');
         dialogVisible.value = false;
-        emit('confirm');
+        emit('confirm', customFormRef.value.formData);
       } else {
         console.log('error submit!', fields);
       }

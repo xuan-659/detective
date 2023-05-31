@@ -13,7 +13,7 @@ export default {
     account: '账号中心',
     role: '角色中心',
     access: '资源管理',
-    file: '文件中心',
+    user: '用户管理',
     home: '首页',
     detection: '缺陷检查',
   },
