@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-31 21:38:34
+ * @LastEditTime : 2023-06-01 22:46:15
 -->
 
 <template>
@@ -138,6 +138,7 @@
         keyWords,
       })
       .then((res) => {
+        selectFlag.value = true;
         console.log('匹配信息', res);
         for (let v of res) {
           selectRes.value[3 - v.count].push(v);
