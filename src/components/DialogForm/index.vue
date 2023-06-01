@@ -1,3 +1,9 @@
+<!--
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-12 14:07:44
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-06-02 03:14:57
+-->
 <template>
   <el-dialog
     v-if="dialogVisible"
@@ -64,13 +70,14 @@
   // 获取表单数据
   const customFormRef = ref(null);
   // 对外事件
-  const emit = defineEmits(['cancel', 'confirm']);
+  const emit = defineEmits(['cancel', 'confirm', 'valid']);
   const cancelHandler = () => {
     customFormRef.value.resetForm(); // 重置表单
     dialogVisible.value = false;
     emit('cancel');
   };
   const confirmHandler = async () => {
+    emit('valid', customFormRef.value.formData);
     await customFormRef.value.customFormRef.validate((valid, fields) => {
       if (valid) {
         console.log(customFormRef.value.formData, '表单数据');

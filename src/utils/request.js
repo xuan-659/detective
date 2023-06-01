@@ -34,18 +34,6 @@ class Request {
       baseURL: prefix,
       timeout: 5 * 1000, // 请求超时时间
       withCredentials: true, // 设置跨域
-      // 数据转换
-      // transformRequest: [
-      //   (data) => {
-      //     // 对 data 进行任意转换处理
-      //     let ret = '';
-      //     for (const it in data) {
-      //       ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
-      //     }
-      //     ret = ret.substring(0, ret.length - 1);
-      //     return ret;
-      //   },
-      // ],
     });
 
     // 拦截请求的
@@ -161,9 +149,12 @@ class Request {
       // }
       // 单独处理文件下载结束
       if (response?.data) {
-        const { code, msg: message, data: result } = response.data;
+        const { code = 200, msg: message = '', data: result = {} } = response.data;
         if (Object.is(code, 200)) {
-          ElMessage.success(message);
+          if (message !== '#') {
+            ElMessage.success(message);
+          }
+
           return Promise.resolve({ code, message, result });
         } else {
           if (code === 10024) {

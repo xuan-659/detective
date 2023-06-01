@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 22:46:15
+ * @LastEditTime : 2023-06-02 02:41:33
 -->
 
 <template>
@@ -14,7 +14,7 @@
       v-model:file-list="fileList"
       :on-change="handleChange"
       drag
-      action="Fake Action"
+      :action="false"
       ref="uploadRef"
       :auto-upload="false"
       :on-remove="remove"
@@ -45,7 +45,7 @@
     </div>
 
     <!-- 查找结果 -->
-    <div v-if="selectFlag">
+    <div v-if="selectFlag" class="flex-item w-800">
       <el-collapse v-model="activeNames">
         <template v-for="v in selectRes" :key="v[0].id">
           <el-collapse-item v-if="v.length !== 0" :title="getTitle(v)" :name="v[0].id">
@@ -88,7 +88,7 @@
   };
 
   async function submit() {
-    beforeUpload(fileList.value[0]?.raw);
+    if (!beforeUpload(fileList.value[0]?.raw)) return false;
     await store
       .dispatch('upload/upload', { file: fileList.value[0].raw })
       .then(() => {
@@ -115,12 +115,43 @@
       ElMessage.error('请添加文件');
       return false;
     }
+    if (file.type != undefined) {
+      const isXLS = file.type === 'application/vnd.ms-excel';
+      if (isXLS) {
+        return true;
+      }
+      const isXLSX =
+        file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      if (isXLSX) {
+        return true;
+      }
+      ElMessage.error('上传文件只能是xls或者xlsx格式!');
+      return false;
+    } else {
+      var name = file.name;
+      var first = name.lastIndexOf('.');
+      var namelength = name.length; //取到文件名长度
+      var filesuffix = name.substring(first + 1, namelength); //截取获得后缀名
+      console.log(filesuffix);
+      if (filesuffix != 'xlsx' || filesuffix != 'xls') {
+        ElMessage.error('上传文件只能是xls或者xlsx格式!');
+        return false;
+      } else {
+        return true;
+      }
+    }
   };
 
   // 分析功能
   const analyseFlag = ref(false);
   const analyseText = ref('');
+  // TODO 文件完整性不合格校验
+  // const analyseRes = false;
   const analyse = () => {
+    if (!submitFlag.value) {
+      ElMessage.error('请先上传文件');
+      return false;
+    }
     store.dispatch('upload/analyse', fileName.value).then((res) => {
       analyseText.value = res;
       analyseFlag.value = true;
@@ -132,9 +163,10 @@
   const selectRes = ref([[], [], []]);
   const select = (keyWords) => {
     console.log('keyWords', keyWords);
+
     store
       .dispatch('upload/selectMsg', {
-        fileName: '45-A4-功能测试Bug缺陷报告清单.xls',
+        fileName,
         keyWords,
       })
       .then((res) => {
@@ -188,11 +220,18 @@
         keyWords.push(v);
       }
     }
-
+    if (!keyWords.length) {
+      ElMessage.error('请至少输入一个关键词');
+      return false;
+    }
     select(keyWords);
   };
   const dialogFormRef = ref(null);
   const openDialogFormHandler = () => {
+    if (!analyseFlag.value) {
+      ElMessage.error('请先检验文件完整性');
+      return false;
+    }
     console.log(dialogFormRef);
     dialogFormRef.value.openDialog();
   };
@@ -232,5 +271,9 @@
 
   .f-14 {
     font-size: 14px;
+  }
+
+  .w-800 {
+    width: 800px;
   }
 </style>

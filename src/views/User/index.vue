@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 18:11:30
+ * @LastEditTime : 2023-06-02 04:10:12
 -->
 <template>
   <div style="height: 1000px"
@@ -28,7 +28,7 @@
       confirmBtnText="确认"
       :formFields="formFields"
       :formData="formData"
-      :rules="rules"
+      :rules="registrules"
       @confirm="confirm"
       width="700px"
     ></DialogForm>
@@ -39,7 +39,7 @@
       confirmBtnText="修改"
       :formFields="formFields2"
       :formData="formData2"
-      :rules="rules"
+      :rules="rules2"
       @confirm="confirm2"
       width="700px"
     ></DialogForm>
@@ -171,6 +171,17 @@
     {
       prop: 'userType',
       label: '用户类型',
+      type: 'select',
+      options: [
+        {
+          label: '管理员',
+          value: '0',
+        },
+        {
+          label: '普通用户',
+          value: '1',
+        },
+      ],
     },
   ]);
 
@@ -178,6 +189,19 @@
     userName: '',
     password: '',
     userType: '',
+  });
+
+  import {
+    userNameValidate,
+    passwordValidate,
+    nickNameValidate,
+    emailValidate,
+    phonenumberValidate,
+  } from '@/utils/validate';
+  import { ElMessage } from 'element-plus';
+  const registrules = reactive({
+    userName: userNameValidate,
+    password: passwordValidate,
   });
 
   const confirm = (userInfo) => {
@@ -210,10 +234,32 @@
     {
       prop: 'sex',
       label: '性别',
+      type: 'select',
+      options: [
+        {
+          label: '男',
+          value: 0,
+        },
+        {
+          label: '女',
+          value: 1,
+        },
+      ],
     },
     {
       prop: 'userType',
       label: '账号类型',
+      type: 'select',
+      options: [
+        {
+          label: '管理员',
+          value: 0,
+        },
+        {
+          label: '普通用户',
+          value: 1,
+        },
+      ],
     },
   ]);
   const formData2 = reactive({
@@ -225,30 +271,53 @@
     userType: '',
   });
 
+  const rules2 = reactive({
+    userName: userNameValidate,
+    nickName: nickNameValidate,
+    email: emailValidate,
+    phonenumber: phonenumberValidate,
+  });
+
   const confirm2 = (userInfo) => {
+    if (userInfo.sex == '男') userInfo.sex = 0;
+    if (userInfo.sex == '女') userInfo.sex = 1;
+    if (userInfo.userType == '管理员') userInfo.userType = 0;
+    if (userInfo.userType == '普通用户') userInfo.userType = 1;
     updateUser(userInfo);
   };
   const dialogFormRef2 = ref(null);
   const openDialogFormHandler2 = () => {
+    if (!tableConfig.selection.length) {
+      ElMessage.error('请选中用户');
+      return false;
+    }
     const { userName, nickName, email, phonenumber, sex, userType } = tableConfig.selection[0];
     console.log(userName, nickName, email, phonenumber, sex, userType);
     formData2.userName = userName;
     formData2.nickName = nickName;
     formData2.email = email;
     formData2.phonenumber = phonenumber;
-    formData2.sex = sex;
-    formData2.userType = userType;
+    formData2.sex = sex == 0 ? '男' : '女';
+    formData2.userType = userType == 0 ? '管理员' : '普通用户';
     console.log(tableConfig.selection[0]);
     dialogFormRef2.value.openDialog();
   };
 
   // 删除用户
   const deleteUser = () => {
+    if (!tableConfig.selection.length) {
+      ElMessage.error('请选中用户');
+      return false;
+    }
     store.dispatch('user/deleteUser', tableConfig.selection[0].id);
   };
 
   // 用户
   const resetUser = () => {
+    if (!tableConfig.selection.length) {
+      ElMessage.error('请选中用户');
+      return false;
+    }
     store.dispatch('user/resetUser', tableConfig.selection[0].id);
   };
 </script>

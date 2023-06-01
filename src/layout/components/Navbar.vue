@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-30 23:25:42
+ * @LastEditTime : 2023-06-01 23:17:16
 -->
 <template>
   <div class="navbar">
@@ -28,9 +28,9 @@
             <router-link to="/">
               <el-dropdown-item>首页</el-dropdown-item>
             </router-link>
-            <a target="_blank" href="">
+            <router-link to="/system/account">
               <el-dropdown-item>个人中心</el-dropdown-item>
-            </a>
+            </router-link>
             <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
