@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-31 17:11:53
+ * @LastEditTime : 2023-05-31 21:38:34
 -->
 
 <template>
@@ -128,6 +128,7 @@
   };
 
   // 查找功能
+  const selectFlag = ref(false);
   const selectRes = ref([[], [], []]);
   const select = (keyWords) => {
     console.log('keyWords', keyWords);
@@ -196,7 +197,6 @@
   };
 
   // 关键词查找结果
-  const selectFlag = ref(true);
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-31 00:42:25
+ * @LastEditTime : 2023-05-31 22:57:27
 -->
 <template>
   <div class="container">
@@ -12,7 +12,11 @@
         <h1 class="title box-card-item">软件缺陷报告评判系统</h1>
         <div class="welcome box-card-item">{{ userInfo.userName }}{{ sex }},欢迎使用本系统</div>
         <div class="box-card-item"> 您可能想使用： </div>
-        <div class="box-card-item"> 个人信息 缺陷查询 </div>
+        <div class="box-card-item" style="color: blue">
+          <a href=""> 个人资料 </a>
+          <a href=""> 用户管理 </a>
+          <a href=""> 缺陷查询 </a>
+        </div>
       </el-card>
     </div>
   </div>

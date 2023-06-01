@@ -9,9 +9,9 @@ export default {
     passwordError: '密码长度不能小于6位',
   },
   route: {
-    system: '系统管理',
-    account: '账号中心',
-    role: '角色中心',
+    system: '个人信息管理',
+    account: '账号设置',
+    role: '个人资料',
     access: '资源管理',
     user: '用户管理',
     home: '首页',

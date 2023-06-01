@@ -17,11 +17,3 @@ export class LoginService extends BaseService {
     });
   }
 }
-
-export class RegisterService extends BaseService {
-  static async registerApi(postData) {
-    console.log('postData', postData);
-    // return BaseService.post('/admin/login', postData);
-    return BaseService.post('/register', postData);
-  }
-}

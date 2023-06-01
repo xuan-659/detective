@@ -2,10 +2,10 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-30 23:31:32
+ * @LastEditTime : 2023-06-01 18:29:16
  */
 import { setTimeStamp } from '@/utils/auth';
-import { LoginService, RegisterService, userService } from '@/services';
+import { LoginService, userService } from '@/services';
 import router from '@/router';
 
 export default {
@@ -63,12 +63,14 @@ export default {
     },
     // 注册用户
     register(context, userInfo) {
-      const { userName, password } = userInfo;
+      const { userName, password, userType } = userInfo;
       return new Promise((resolve, reject) => {
-        RegisterService.loginApi({
-          userName,
-          password,
-        })
+        userService
+          .registerApi({
+            userName,
+            password,
+            userType,
+          })
           .then((data) => {
             console.log('data', data);
             resolve();
@@ -86,6 +88,67 @@ export default {
           const { userInfo } = data?.result;
           commit('setUserInfo', userInfo);
         });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    // 获取用户信息
+    getAllUser() {
+      return new Promise((resolve) => {
+        userService.getAllUserApi().then((data) => {
+          const { result } = data;
+          resolve(result);
+        });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    updateUser(commit, AlluserInfo) {
+      const { id, userInfo } = AlluserInfo;
+      const { userName, nickName, email, phonenumber, sex, userType } = userInfo;
+      return new Promise((resolve) => {
+        userService
+          .updateUserApi({
+            id,
+            userName,
+            nickName,
+            email,
+            phonenumber,
+            sex,
+            userType,
+          })
+          .then((data) => {
+            const { result } = data;
+            resolve(result);
+          });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    deleteUser(commit, id) {
+      return new Promise((resolve) => {
+        userService
+          .deleteUserApi({
+            id,
+          })
+          .then((data) => {
+            const { result } = data;
+            resolve(result);
+          });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    resetUser(commit, id) {
+      return new Promise((resolve) => {
+        userService
+          .resetUserApi({
+            id,
+          })
+          .then((data) => {
+            const { result } = data;
+            resolve(result);
+          });
       });
       // commit('setUserInfo', {});
     },
