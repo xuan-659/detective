@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 18:34:10
+ * @LastEditTime : 2023-06-01 22:44:36
 -->
 <template>
   <div>个人资料</div>
@@ -10,9 +10,9 @@
     <div class="avatar-container">
       <el-upload
         class="avatar-uploader"
-        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+        :auto-upload="false"
         :show-file-list="false"
-        :on-success="handleAvatarSuccess"
+        :on-change="onChange"
         :before-upload="beforeAvatarUpload"
       >
         <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -47,20 +47,21 @@
   import { reactive } from 'vue';
   import { useStore } from 'vuex';
   const store = useStore();
-
+  const userInfo = store.getters.userInfo;
   // do not use same name with ref
   const form = reactive({
-    userName: store.getters.userInfo.userName,
-    nickName: store.getters.userInfo.nickName,
-    sex: store.getters.userInfo.sex == 1 ? '男' : '女',
+    userName: userInfo.userName,
+    nickName: userInfo.nickName,
+    sex: userInfo.sex == 1 ? '男' : '女',
   });
 
   const onSubmit = () => {
-    console.log('submit!');
+    userInfo.nickName = form.nickName;
+    userInfo.sex = form.nickName == '男' ? 1 : 2;
+    store.dispatch('user/updateUser', userInfo);
   };
 
   import { ref } from 'vue';
-  import { ElMessage } from 'element-plus';
   import { Plus } from '@element-plus/icons-vue';
 
   const imageUrl = ref('');
@@ -69,15 +70,21 @@
   // const handleAvatarSuccess = (response, uploadFile) => {};
 
   const beforeAvatarUpload = (rawFile) => {
-    if (rawFile.type !== 'image/jpeg') {
-      ElMessage.error('Avatar picture must be JPG format!');
-      return false;
-    } else if (rawFile.size / 1024 / 1024 > 2) {
-      ElMessage.error('Avatar picture size can not exceed 2MB!');
-      return false;
-    }
+    // if (rawFile.type !== 'image/jpeg') {
+    //   ElMessage.error('Avatar picture must be JPG format!');
+    //   return false;
+    // } else if (rawFile.size / 1024 / 1024 > 2) {
+    //   ElMessage.error('Avatar picture size can not exceed 2MB!');
+    //   return false;
+    // }
     imageUrl.value = URL.createObjectURL(rawFile);
     return true;
+  };
+
+  const onChange = (uploadFile) => {
+    console.log(uploadFile);
+    beforeAvatarUpload(uploadFile.raw);
+    store.dispatch('user/avatar', uploadFile);
   };
 </script>
 

@@ -152,7 +152,8 @@
   // 修改用户信息
   const updateUser = (userInfo) => {
     console.log(userInfo);
-    store.dispatch('user/updateUser', { id: tableConfig.selection[0].id, userInfo });
+    userInfo.id = tableConfig.selection[0].id;
+    store.dispatch('user/updateUser', userInfo);
   };
 
   // 弹窗

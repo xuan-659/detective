@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-31 16:52:58
+ * @LastEditTime : 2023-06-01 22:44:27
  */
 import { createRouter, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
@@ -83,7 +83,10 @@ router.beforeEach(async (to, from, next) => {
       if (!store.getters.isLoadMenu) {
         // 处理用户权限，筛选出需要添加的路由
         // 模拟请求后菜单数据
-        const menusList = ['account', 'access', 'role', 'user', 'detection'];
+        let menusList = ['account', 'access', 'role', 'detection'];
+        if (store.getters.userInfo.userType == 0) {
+          menusList.push('user');
+        }
         const filterRoutes = await store.dispatch('menu/filterRoutes', menusList);
         // 利用 addRoute 循环添加
         filterRoutes.forEach((item) => {

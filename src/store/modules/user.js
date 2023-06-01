@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 18:29:16
+ * @LastEditTime : 2023-06-01 21:54:22
  */
 import { setTimeStamp } from '@/utils/auth';
 import { LoginService, userService } from '@/services';
@@ -103,9 +103,8 @@ export default {
       // commit('setUserInfo', {});
     },
 
-    updateUser(commit, AlluserInfo) {
-      const { id, userInfo } = AlluserInfo;
-      const { userName, nickName, email, phonenumber, sex, userType } = userInfo;
+    updateUser(commit, userInfo) {
+      const { id, userName, nickName, email, phonenumber, sex, userType } = userInfo;
       return new Promise((resolve) => {
         userService
           .updateUserApi({
@@ -144,6 +143,36 @@ export default {
         userService
           .resetUserApi({
             id,
+          })
+          .then((data) => {
+            const { result } = data;
+            resolve(result);
+          });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    changePwd(commit, passInfo) {
+      const { oldPwd, newPwd } = passInfo;
+      return new Promise((resolve) => {
+        userService
+          .changePwdApi({
+            oldPwd,
+            newPwd,
+          })
+          .then((data) => {
+            const { result } = data;
+            resolve(result);
+          });
+      });
+      // commit('setUserInfo', {});
+    },
+
+    avatar(commit, file) {
+      return new Promise((resolve) => {
+        userService
+          .avatarApi({
+            file,
           })
           .then((data) => {
             const { result } = data;

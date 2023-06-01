@@ -24,4 +24,12 @@ export class userService extends BaseService {
   static async resetUserApi(postData) {
     return BaseService.post('/user/resetUser', postData);
   }
+
+  static async changePwdApi(postData) {
+    return BaseService.post('/user/changePwd', postData);
+  }
+
+  static async avatarApi(postData) {
+    return BaseService.post('/user/avatar', postData);
+  }
 }

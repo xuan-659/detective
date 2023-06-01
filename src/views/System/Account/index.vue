@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 18:37:14
+ * @LastEditTime : 2023-06-01 21:36:55
 -->
 <template>
   <div>账号设置</div>
@@ -19,46 +19,77 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">保存修改</el-button>
-        <el-button type="primary" @click="onSubmit">修改密码</el-button>
+        <el-button type="primary" @click="openDialogFormHandler">修改密码</el-button>
       </el-form-item>
     </el-form>
+
+    <DialogForm
+      ref="dialogFormRef"
+      title="修改密码"
+      confirmBtnText="确认"
+      :formFields="formFields"
+      :formData="formData"
+      :rules="rules"
+      @confirm="confirm"
+      width="700px"
+    ></DialogForm>
   </div>
 </template>
 
 <script setup>
-  import { reactive } from 'vue';
+  import { reactive, ref } from 'vue';
   import { useStore } from 'vuex';
   const store = useStore();
-
+  const userInfo = store.getters.userInfo;
   // do not use same name with ref
   const form = reactive({
-    phonenumber: store.getters.userInfo.phonenumber,
-    email: store.getters.userInfo.email,
-    userType: store.getters.userInfo.userType == 1 ? '普通用户' : '管理员',
+    phonenumber: userInfo.phonenumber,
+    email: userInfo.email,
+    userType: userInfo.userType == 1 ? '普通用户' : '管理员',
   });
 
   const onSubmit = () => {
+    userInfo.phonenumber = form.phonenumber;
+    userInfo.email = form.email;
     console.log('submit!');
+    store.dispatch('user/updateUser', userInfo);
+  };
+  import DialogForm from '@/components/DialogForm';
+  const dialogFormRef = ref(null);
+
+  const formFields = reactive([
+    {
+      prop: 'oldPwd',
+      label: '原密码',
+    },
+    {
+      prop: 'newPwd',
+      label: '新密码',
+    },
+    {
+      prop: 'confirmPwd',
+      label: '确认密码',
+    },
+  ]);
+
+  const formData = reactive({
+    oldPwd: '',
+    newPwd: '',
+    confirmPwd: '',
+  });
+
+  const openDialogFormHandler = () => {
+    console.log(dialogFormRef);
+    dialogFormRef.value.openDialog();
   };
 
-  import { ref } from 'vue';
+  const changePassword = (passInfo) => {
+    store.dispatch('user/changePwd', passInfo);
+  };
 
-  const imageUrl = ref('');
-  imageUrl.value = store.getters.userInfo.avatar;
-
-  // const handleAvatarSuccess = (response, uploadFile) => { };
-
-  // const beforeAvatarUpload = (rawFile) => {
-  //   if (rawFile.type !== 'image/jpeg') {
-  //     ElMessage.error('Avatar picture must be JPG format!');
-  //     return false;
-  //   } else if (rawFile.size / 1024 / 1024 > 2) {
-  //     ElMessage.error('Avatar picture size can not exceed 2MB!');
-  //     return false;
-  //   }
-  //   imageUrl.value = URL.createObjectURL(rawFile);
-  //   return true;
-  // };
+  const confirm = (passInfo) => {
+    changePassword(passInfo);
+  };
 </script>
 
 <style lang="scss" scoped>
