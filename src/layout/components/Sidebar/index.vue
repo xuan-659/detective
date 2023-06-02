@@ -3,7 +3,7 @@
     <router-link to="/home">
       <div class="logo-container">
         <el-avatar shape="square" :size="logoHeight" width="auto" :src="squareUrl"></el-avatar>
-        <h1 class="logo-title" v-if="$store.getters.sidebarOpened">软件缺陷报告评判系统</h1>
+        <h1 class="logo-title" v-if="$store.getters.sidebarOpened">{{ $t('system.name') }}</h1>
       </div>
     </router-link>
     <!-- 加上有滚动条 -->
@@ -29,6 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     .logo-title {
       margin-left: 10px;
       color: #fff;

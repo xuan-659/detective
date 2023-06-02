@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-30 21:48:31
+ * @LastEditTime : 2023-06-02 15:45:20
 -->
 <template>
   <div class="login-container">
@@ -16,7 +16,7 @@
           <svg-icon icon="user"></svg-icon>
         </span>
         <el-input
-          placeholder="请输入用户名"
+          :placeholder="$t('login.userNamePlaceholder')"
           name="username"
           type="text"
           v-model="loginForm.username"
@@ -28,7 +28,7 @@
           <svg-icon icon="password"></svg-icon>
         </span>
         <el-input
-          placeholder="请输入密码"
+          :placeholder="$t('login.passwordPlaceholder')"
           name="password"
           v-model="loginForm.password"
           :type="passwordType"
@@ -49,7 +49,7 @@
         style="width: 48%; margin-bottom: 30px"
         :loading="loading"
         @click="handleForget"
-        >忘记密码</el-button
+        >{{ $t('login.forgetBtn') }}</el-button
       >
     </el-form>
   </div>
@@ -124,7 +124,7 @@
   };
 
   const handleForget = () => {
-    ElMessage.warning('请联系系统管理员');
+    ElMessage.warning(i18n.t('login.forgetMsg'));
   };
 </script>
 

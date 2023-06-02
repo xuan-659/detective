@@ -2,30 +2,36 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 04:10:12
+ * @LastEditTime : 2023-06-02 19:27:32
 -->
 <template>
   <div style="height: 1000px"
-    >用户管理
+    >{{ $t('userManage.setting') }}
     <CustomTable :config="tableConfig" isShowTools isShowAction>
-      <template #age="{ row }">年龄:{{ row.age }}</template>
+      <template #age="{ row }">{{ $t('userManage.age') }}:{{ row.age }}</template>
     </CustomTable>
     <!-- {{ tableConfig.selection }} -->
-    <div>
+    <div style="margin-top: 30px">
       <el-button class="flex-item" type="success" @click="openDialogFormHandler">
-        注册用户
+        {{ $t('userManage.registUser') }}
       </el-button>
       <el-button class="flex-item" type="primary" @click="openDialogFormHandler2">
-        修改用户信息
+        {{ $t('userManage.changeUser') }}
       </el-button>
-      <el-button class="flex-item" type="danger" @click="deleteUser"> 删除用户 </el-button>
-      <el-button class="flex-item" type="danger" @click="resetUser"> 重置密码 </el-button>
+      <el-button class="flex-item" type="danger" @click="deleteUser">
+        {{ $t('userManage.deleteUser') }}
+      </el-button>
+      <el-button class="flex-item" type="danger" @click="resetUser">
+        {{ $t('userManage.resetUser') }}
+      </el-button>
     </div>
-
+    <div style="color: darkgray; font-size: 14px; margin-top: 20px">{{
+      $t('userManage.resetInfo')
+    }}</div>
     <DialogForm
       ref="dialogFormRef"
-      title="注册用户"
-      confirmBtnText="确认"
+      :title="$t('userManage.registUser')"
+      :confirmBtnText="$t('userInfo.confirm')"
       :formFields="formFields"
       :formData="formData"
       :rules="registrules"
@@ -35,8 +41,8 @@
 
     <DialogForm
       ref="dialogFormRef2"
-      title="修改用户信息"
-      confirmBtnText="修改"
+      :title="$t('userManage.changeUser')"
+      :confirmBtnText="$t('userManage.change')"
       :formFields="formFields2"
       :formData="formData2"
       :rules="rules2"
@@ -50,25 +56,44 @@
   import { ref, reactive } from 'vue';
   import { useStore } from 'vuex';
   import CustomTable from '@/components/CustomTable';
+  import { useI18n } from 'vue-i18n';
+  const i18n = useI18n();
   const store = useStore();
   const totalData = ref([]);
   const tableData = ref([]);
-  store.dispatch('user/getAllUser').then((res) => {
-    totalData.value = res;
-    tableConfig.pagination.total = res.length || 0;
-    updateInfo();
-  });
+
+  const init = () => {
+    store.dispatch('user/getAllUser').then((res) => {
+      totalData.value = res;
+      tableConfig.pagination.total = res.length || 0;
+      updateInfo();
+    });
+  };
+
+  init();
 
   const updateInfo = () => {
     const startIndex = (tableConfig.pagination.pageNumber - 1) * tableConfig.pagination.pageSize;
-    // const endIndex = tableConfig.pagination.pageNumber * tableConfig.pagination.pageSize
-    // console.log('页码', startIndex, endIndex)
     tableData.value = [];
     for (
       let i = startIndex;
       i < totalData.value.length && i < startIndex + tableConfig.pagination.pageSize;
       i++
     ) {
+      totalData.value[i].nickName = totalData.value[i].nickName ?? `user`;
+      if (totalData.value[i].sex == '0') {
+        totalData.value[i].sex = i18n.t('roleInfo.man');
+      }
+      if (totalData.value[i].sex == '1') {
+        totalData.value[i].sex = i18n.t('roleInfo.woman');
+      }
+      if (totalData.value[i].userType == '0') {
+        totalData.value[i].userType = i18n.t('userInfo.administrator');
+      }
+      if (totalData.value[i].userType == '1') {
+        totalData.value[i].userType = i18n.t('userInfo.user');
+      }
+
       tableData.value.push(totalData.value[i]);
     }
     console.log(tableData.value);
@@ -90,9 +115,9 @@
     indexable: true, // 是否有序列号
     selection: [],
     indexMethod: indexHandler, // 序号显示的方式
-    indexLabel: '序号', // 序列号的表头名字
+    indexLabel: i18n.t('userManage.serial'), // 序列号的表头名字
     // summary: true, // 表格底部汇总
-    emptyText: '无数据', // 没有数据的时候显示
+    emptyText: i18n.t('userManage.emptyText'), // 没有数据的时候显示
     tableFields: [
       {
         prop: 'id',
@@ -100,31 +125,31 @@
       },
       {
         prop: 'userName',
-        label: '用户名',
-        align: 'center',
+        label: i18n.t('roleInfo.userNmae'),
       },
       {
         prop: 'nickName',
-        label: '昵称',
+        label: i18n.t('roleInfo.nickName'),
+
         // type: 'slot',
         // slotName: 'age',
         // sortable: true,
       },
       {
         prop: 'email',
-        label: '邮箱',
+        label: i18n.t('userInfo.email'),
       },
       {
-        prop: 'userName',
-        label: '手机号',
+        prop: 'phonenumber',
+        label: i18n.t('userInfo.phonenumber'),
       },
       {
         prop: 'sex',
-        label: '性别',
+        label: i18n.t('roleInfo.sex'),
       },
       {
         prop: 'userType',
-        label: '账号类型',
+        label: i18n.t('userInfo.userType'),
       },
     ], // 表头
     tableData: tableData, // 表格数据
@@ -146,14 +171,21 @@
 
   // 注册用户信息
   const registerUser = (userInfo) => {
-    store.dispatch('user/register', userInfo);
+    store.dispatch('user/register', userInfo).then((res) => {
+      console.log('res', res, totalData);
+      totalData.value.push(res);
+      updateInfo();
+    });
   };
 
   // 修改用户信息
   const updateUser = (userInfo) => {
     console.log(userInfo);
     userInfo.id = tableConfig.selection[0].id;
-    store.dispatch('user/updateUser', userInfo);
+    store.dispatch('user/updateUser', userInfo).then(() => {
+      init();
+      tableConfig.selection[0] = userInfo;
+    });
   };
 
   // 弹窗
@@ -162,23 +194,23 @@
   const formFields = reactive([
     {
       prop: 'userName',
-      label: '用户名',
+      label: i18n.t('roleInfo.userName'),
     },
     {
       prop: 'password',
-      label: '密码',
+      label: i18n.t('userManage.password'),
     },
     {
       prop: 'userType',
-      label: '用户类型',
+      label: i18n.t('userInfo.userType'),
       type: 'select',
       options: [
         {
-          label: '管理员',
+          label: i18n.t('userInfo.administrator'),
           value: '0',
         },
         {
-          label: '普通用户',
+          label: i18n.t('userInfo.user'),
           value: '1',
         },
       ],
@@ -217,47 +249,47 @@
   const formFields2 = reactive([
     {
       prop: 'userName',
-      label: '用户名',
+      label: i18n.t('roleInfo.userNmae'),
     },
     {
       prop: 'nickName',
-      label: '昵称',
+      label: i18n.t('roleInfo.nickName'),
     },
     {
       prop: 'email',
-      label: '邮箱',
+      label: i18n.t('userInfo.email'),
     },
     {
       prop: 'phonenumber',
-      label: '手机号',
+      label: i18n.t('userInfo.phonenumber'),
     },
     {
       prop: 'sex',
-      label: '性别',
+      label: i18n.t('roleInfo.sex'),
       type: 'select',
       options: [
         {
-          label: '男',
+          label: i18n.t('roleInfo.man'),
           value: 0,
         },
         {
-          label: '女',
+          label: i18n.t('roleInfo.woman'),
           value: 1,
         },
       ],
     },
     {
       prop: 'userType',
-      label: '账号类型',
+      label: i18n.t('userInfo.userType'),
       type: 'select',
       options: [
         {
-          label: '管理员',
-          value: 0,
+          label: i18n.t('userInfo.administrator'),
+          value: '0',
         },
         {
-          label: '普通用户',
-          value: 1,
+          label: i18n.t('userInfo.user'),
+          value: '1',
         },
       ],
     },
@@ -279,16 +311,16 @@
   });
 
   const confirm2 = (userInfo) => {
-    if (userInfo.sex == '男') userInfo.sex = 0;
-    if (userInfo.sex == '女') userInfo.sex = 1;
-    if (userInfo.userType == '管理员') userInfo.userType = 0;
-    if (userInfo.userType == '普通用户') userInfo.userType = 1;
+    if (userInfo.sex == i18n.t('roleInfo.man')) userInfo.sex = '0';
+    if (userInfo.sex == i18n.t('roleInfo.woman')) userInfo.sex = '1';
+    if (userInfo.userType == i18n.t('roleInfo.administrator')) userInfo.userType = '0';
+    if (userInfo.userType == i18n.t('roleInfo.user')) userInfo.userType = '1';
     updateUser(userInfo);
   };
   const dialogFormRef2 = ref(null);
   const openDialogFormHandler2 = () => {
     if (!tableConfig.selection.length) {
-      ElMessage.error('请选中用户');
+      ElMessage.error(i18n.t('userManage.selectMsg'));
       return false;
     }
     const { userName, nickName, email, phonenumber, sex, userType } = tableConfig.selection[0];
@@ -297,8 +329,8 @@
     formData2.nickName = nickName;
     formData2.email = email;
     formData2.phonenumber = phonenumber;
-    formData2.sex = sex == 0 ? '男' : '女';
-    formData2.userType = userType == 0 ? '管理员' : '普通用户';
+    formData2.sex = sex;
+    formData2.userType = userType;
     console.log(tableConfig.selection[0]);
     dialogFormRef2.value.openDialog();
   };
@@ -306,16 +338,18 @@
   // 删除用户
   const deleteUser = () => {
     if (!tableConfig.selection.length) {
-      ElMessage.error('请选中用户');
+      ElMessage.error(i18n.t('userManage.selectMsg'));
       return false;
     }
-    store.dispatch('user/deleteUser', tableConfig.selection[0].id);
+    store.dispatch('user/deleteUser', tableConfig.selection[0].id).then(() => {
+      init();
+    });
   };
 
   // 用户
   const resetUser = () => {
     if (!tableConfig.selection.length) {
-      ElMessage.error('请选中用户');
+      ElMessage.error(i18n.t('userManage.selectMsg'));
       return false;
     }
     store.dispatch('user/resetUser', tableConfig.selection[0].id);

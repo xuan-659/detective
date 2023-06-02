@@ -2,24 +2,28 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 04:17:55
+ * @LastEditTime : 2023-06-02 16:22:49
 -->
 <template>
-  <div>账号设置</div>
+  <div>{{ $t('userInfo.setting') }}</div>
   <div class="container">
     <el-form :model="form" ref="ruleFormRef" label-width="120px" :rules="rules">
-      <el-form-item label="手机号" prop="phonenumber">
+      <el-form-item :label="$t('userInfo.phonenumber')" prop="phonenumber">
         <el-input v-model="form.phonenumber" />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item :label="$t('userInfo.email')" prop="email">
         <el-input v-model="form.email" />
       </el-form-item>
-      <el-form-item label="权限">
+      <el-form-item :label="$t('userInfo.userType')">
         <el-input v-model="form.userType" disabled />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit(ruleFormRef)">保存修改</el-button>
-        <el-button type="primary" @click="openDialogFormHandler">修改密码</el-button>
+        <el-button type="primary" @click="onSubmit(ruleFormRef)">{{
+          $t('userInfo.saveBtn')
+        }}</el-button>
+        <el-button type="primary" @click="openDialogFormHandler">{{
+          $t('userInfo.changePwd')
+        }}</el-button>
       </el-form-item>
     </el-form>
 
@@ -27,8 +31,8 @@
       ref="dialogFormRef"
       :rules="rules2"
       :validate-event="false"
-      title="修改密码"
-      confirmBtnText="确认"
+      :title="$t('userInfo.changePwd')"
+      :confirmBtnText="$t('userInfo.confirm')"
       :formFields="formFields"
       :formData="formData"
       @valid="valid"
@@ -42,25 +46,26 @@
   import { reactive, ref } from 'vue';
   import { useStore } from 'vuex';
   import { ElMessage } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
+  const i18n = useI18n();
   const store = useStore();
   const userInfo = store.getters.userInfo;
   // do not use same name with ref
   const form = reactive({
     phonenumber: userInfo.phonenumber,
     email: userInfo.email,
-    userType: userInfo.userType == 1 ? '普通用户' : '管理员',
+    userType: userInfo.userType == 1 ? i18n.t('userInfo.user') : i18n.t('userInfo.administrator'),
   });
 
   const onSubmit = async (formEl) => {
     if (!formEl) return;
     await formEl.validate((valid) => {
       if (!valid) {
-        ElMessage.error('手机号或邮箱不正确');
+        ElMessage.error(i18n.t('userInfo.infoError'));
         return false;
       } else {
         userInfo.phonenumber = form.phonenumber;
         userInfo.email = form.email;
-        console.log('submit!');
         store.dispatch('user/updateUser', userInfo);
       }
     });
@@ -71,15 +76,17 @@
   const formFields = reactive([
     {
       prop: 'oldPwd',
-      label: '原密码',
+      label: i18n.t('userInfo.oldPwd'),
     },
     {
       prop: 'newPwd',
-      label: '新密码',
+      label: i18n.t('userInfo.newPwd'),
+      type: 'password',
     },
     {
       prop: 'confirmPwd',
-      label: '确认密码',
+      label: i18n.t('userInfo.confirmPwd'),
+      type: 'password',
     },
   ]);
 
@@ -96,9 +103,9 @@
   };
   const validatePass2 = (rule, value, callback) => {
     if (value === '') {
-      callback(new Error('请再次输入密码'));
+      callback(new Error(i18n.t('userInfp.pwdError')));
     } else if (value !== formData.newPwd) {
-      callback(new Error('两次输入密码不一致!'));
+      callback(new Error(i18n.t('userInfp.repeatError')));
     } else {
       callback();
     }

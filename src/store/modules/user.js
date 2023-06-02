@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 21:54:22
+ * @LastEditTime : 2023-06-02 19:13:12
  */
 import { setTimeStamp } from '@/utils/auth';
 import { LoginService, userService } from '@/services';
@@ -24,16 +24,19 @@ export default {
     setUserInfo(state, userInfo) {
       state.userInfo = userInfo;
     },
+    updateUserInfo(state, userInfo) {
+      state.userInfo = Object.assign(state.userInfo, userInfo);
+    },
   },
   actions: {
     // 登录逻辑
     login(context, userInfo) {
       const { commit } = context;
-      const { username, password } = userInfo;
+      const { username: userName, password } = userInfo;
       // console.log("userInfo", username, password)
       return new Promise((resolve, reject) => {
         LoginService.loginApi({
-          username: username,
+          userName,
           password,
         })
           .then((data) => {
@@ -73,7 +76,7 @@ export default {
           })
           .then((data) => {
             console.log('data', data);
-            resolve();
+            resolve(data.result);
           })
           .catch((err) => {
             reject(err);
@@ -86,6 +89,9 @@ export default {
       return new Promise(() => {
         userService.getUserInfoApi().then((data) => {
           const { userInfo } = data?.result;
+          const prefix = process.env.VUE_APP_API_URL;
+          userInfo.avatar = prefix + userInfo.avatar;
+          console.log('===', userInfo);
           commit('setUserInfo', userInfo);
         });
       });
@@ -103,8 +109,9 @@ export default {
       // commit('setUserInfo', {});
     },
 
-    updateUser(commit, userInfo) {
+    updateUser({ commit }, userInfo) {
       const { id, userName, nickName, email, phonenumber, sex, userType } = userInfo;
+      commit('updateUserInfo', userInfo);
       return new Promise((resolve) => {
         userService
           .updateUserApi({

@@ -2,9 +2,10 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-19 15:05:51
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-05-31 17:14:05
+ * @LastEditTime : 2023-06-02 12:48:59
  */
 import { UploadService, AnalyseService, SelectMsgService } from '@/services/index';
+import { toFromData } from '../../utils/fomdata';
 
 export default {
   namespaced: true,
@@ -43,10 +44,12 @@ export default {
     selectMsg(context, selectInfo) {
       const { fileName, keyWords } = selectInfo;
       return new Promise((resolve, reject) => {
-        SelectMsgService.selectMsgApi({
-          fileName,
-          keyWords,
-        })
+        SelectMsgService.selectMsgApi(
+          toFromData({
+            fileName,
+            keyWords,
+          })
+        )
           .then((data) => {
             console.log('data', data);
             resolve(data.result);

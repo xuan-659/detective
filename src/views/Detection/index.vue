@@ -2,11 +2,11 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 02:41:33
+ * @LastEditTime : 2023-06-02 17:35:04
 -->
 
 <template>
-  <div>缺陷检测</div>
+  <div>{{ $t('detection.title') }}</div>
   <div class="detection-container">
     <!-- 文件上传框 -->
     <el-upload
@@ -20,38 +20,44 @@
       :on-remove="remove"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text"> 拖动文件或 <em>点击上传</em> </div>
+      <div class="el-upload__text">
+        {{ $t('detection.dragFile') }} <em>{{ $t('detection.click') }}</em>
+      </div>
       <template #tip>
-        <div class="el-upload__tip"> 请上传待检测的excel文件 </div>
+        <div class="el-upload__tip"> {{ $t('detection.uploadMsg') }} </div>
       </template>
     </el-upload>
 
     <!-- 三个按钮 -->
     <div>
-      <el-button class="flex-item" type="success" @click="submit"> 确认上传 </el-button>
-      <el-button class="flex-item" type="success" @click="analyse"> 完整性检测 </el-button>
+      <el-button class="flex-item" type="success" @click="submit">
+        {{ $t('detection.confirm') }}
+      </el-button>
+      <el-button class="flex-item" type="success" @click="analyse">
+        {{ $t('detection.analyse') }}
+      </el-button>
       <el-button class="flex-item" type="success" @click="openDialogFormHandler">
-        查找缺陷用例
+        {{ $t('detection.selectMsg') }}
       </el-button>
     </div>
     <!-- 上传成功 -->
     <div v-if="submitFlag" class="flex-item w-360">
-      <el-tag class="f-14" type="success">文件{{ fileName }}上传成功</el-tag>
+      <el-tag class="f-14" type="success"
+        >{{ $t('detection.file') }} {{ fileName }} {{ $t('detection.uploadSuccess') }}</el-tag
+      >
     </div>
 
     <!-- 检测成功 -->
     <div v-if="analyseFlag" class="flex-item w-360">
-      <el-tag class="f-14" type="success">{{ analyseText }}</el-tag>
+      <el-tag class="f-14" :type="analyseType">{{ analyseText }}</el-tag>
     </div>
 
     <!-- 查找结果 -->
     <div v-if="selectFlag" class="flex-item w-800">
-      <el-collapse v-model="activeNames">
-        <template v-for="v in selectRes" :key="v[0].id">
-          <el-collapse-item v-if="v.length !== 0" :title="getTitle(v)" :name="v[0].id">
-            <li v-for="s in v" :key="s.id">
-              {{ s.summary }}
-            </li>
+      <el-collapse>
+        <template v-for="(v, index) in selectRes" :key="index">
+          <el-collapse-item v-if="v.length !== 0" :title="getTitle(v)">
+            <li v-for="s in v" :key="s.id"> 第{{ s.row }}行：{{ s.summary }} </li>
           </el-collapse-item>
         </template>
       </el-collapse>
@@ -59,11 +65,10 @@
     <!-- 关键词弹框 -->
     <DialogForm
       ref="dialogFormRef"
-      title="关键词查找"
-      confirmBtnText="查找"
+      :title="$t('detection.seekKeywords')"
+      :confirmBtnText="$t('detection.seek')"
       :formFields="formFields"
       :formData="formData"
-      :rules="rules"
       @confirm="confirm"
       width="700px"
     ></DialogForm>
@@ -73,7 +78,10 @@
   import { useStore } from 'vuex';
   import { ref, reactive } from 'vue';
   import { ElMessage } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
+  const analyseType = ref('success');
   const store = useStore();
+  const i18n = useI18n();
 
   // 提交功能
   const fileList = ref([]);
@@ -94,6 +102,8 @@
       .then(() => {
         fileName.value = fileList.value[0]?.raw.name;
         submitFlag.value = true;
+        analyseFlag.value = false;
+        selectFlag.value = false;
         // console.log(fileList.value[0]?.raw.name)
         uploadRef.value.clearFiles();
         fileList.value.pop();
@@ -112,7 +122,7 @@
     console.log(file);
     // 文件为空
     if (!file) {
-      ElMessage.error('请添加文件');
+      ElMessage.error(i18n.error('detection.addFile'));
       return false;
     }
     if (file.type != undefined) {
@@ -125,7 +135,7 @@
       if (isXLSX) {
         return true;
       }
-      ElMessage.error('上传文件只能是xls或者xlsx格式!');
+      ElMessage.error(i18n.t('detection.formatError'));
       return false;
     } else {
       var name = file.name;
@@ -134,7 +144,7 @@
       var filesuffix = name.substring(first + 1, namelength); //截取获得后缀名
       console.log(filesuffix);
       if (filesuffix != 'xlsx' || filesuffix != 'xls') {
-        ElMessage.error('上传文件只能是xls或者xlsx格式!');
+        ElMessage.error(i18n.t('detection.formatError'));
         return false;
       } else {
         return true;
@@ -145,15 +155,24 @@
   // 分析功能
   const analyseFlag = ref(false);
   const analyseText = ref('');
+  const analyseRes = ref(true);
   // TODO 文件完整性不合格校验
   // const analyseRes = false;
   const analyse = () => {
     if (!submitFlag.value) {
-      ElMessage.error('请先上传文件');
+      ElMessage.error(i18n.t('detection.emptyError'));
       return false;
     }
     store.dispatch('upload/analyse', fileName.value).then((res) => {
       analyseText.value = res;
+      if (res.indexOf('不合格') !== -1) {
+        analyseType.value = 'danger';
+        analyseText.value += ',请重新上传';
+        analyseRes.value = false;
+      } else {
+        analyseType.value = 'success';
+        analyseRes.value = true;
+      }
       analyseFlag.value = true;
     });
   };
@@ -166,7 +185,7 @@
 
     store
       .dispatch('upload/selectMsg', {
-        fileName,
+        fileName: fileName.value,
         keyWords,
       })
       .then((res) => {
@@ -181,11 +200,11 @@
 
   const getTitle = (v) => {
     if (v[0].count == 1) {
-      return '弱匹配(1)';
+      return `${i18n.t('detection.weakMatch')}(${v.length})`;
     } else if (v[0].count == 2) {
-      return '一般匹配(2)';
+      return `${i18n.t('detection.generalMatch')}(${v.length})`;
     } else {
-      return '高度匹配(3)';
+      return `${i18n.t('detection.highMatch')}(${v.length})`;
     }
   };
 
@@ -195,15 +214,15 @@
   const formFields = reactive([
     {
       prop: 'keyword1',
-      label: '关键词1',
+      label: i18n.t('detection.keyword1'),
     },
     {
       prop: 'keyword2',
-      label: '关键词2',
+      label: i18n.t('detection.keyword2'),
     },
     {
       prop: 'keyword3',
-      label: '关键词3',
+      label: i18n.t('detection.keyword3'),
     },
   ]);
   //定义表单数据
@@ -221,7 +240,7 @@
       }
     }
     if (!keyWords.length) {
-      ElMessage.error('请至少输入一个关键词');
+      ElMessage.error(i18n.t('detection.emptyKeywordsError'));
       return false;
     }
     select(keyWords);
@@ -229,7 +248,11 @@
   const dialogFormRef = ref(null);
   const openDialogFormHandler = () => {
     if (!analyseFlag.value) {
-      ElMessage.error('请先检验文件完整性');
+      ElMessage.error(i18n.t('detection.analyseFlag'));
+      return false;
+    }
+    if (!analyseRes.value) {
+      ElMessage.error(i18n.t('detection.analyseError'));
       return false;
     }
     console.log(dialogFormRef);

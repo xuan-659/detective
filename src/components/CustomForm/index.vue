@@ -179,6 +179,22 @@
               :placeholder="field.placeholder ?? '请输入' + field.label"
             ></el-input>
           </el-form-item>
+          <el-form-item
+            :label="field.label"
+            :prop="field.prop"
+            v-else-if="(!field.type || field.type === 'password') && !field.hidden"
+          >
+            <!-- 输入框 -->
+            <el-input
+              v-model="copyFormData[field.prop]"
+              :clearable="field.clearable ?? true"
+              type="password"
+              :readonly="field.readonly"
+              :disabled="field.disabled"
+              :placeholder="field.placeholder ?? '请输入' + field.label"
+              show-password
+            ></el-input>
+          </el-form-item>
         </el-col>
       </template>
     </el-row>

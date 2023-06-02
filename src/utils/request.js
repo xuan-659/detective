@@ -63,7 +63,7 @@ class Request {
       config.headers[authToken] = token;
     }
     // 配置请求头
-    console.log('config', config);
+    console.log('添加请求头', config.headers);
     if (!config.headers['Content-Type']) {
       config.headers['Content-Type'] = this.axiosInstance.defaults.headers['Content-Type'];
     }
@@ -78,6 +78,7 @@ class Request {
       showLoading();
     }
     loadingIndex++;
+    console.log('config', config);
     return config;
   }
 

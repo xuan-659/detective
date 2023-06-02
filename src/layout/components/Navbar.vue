@@ -26,12 +26,12 @@
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/">
-              <el-dropdown-item>首页</el-dropdown-item>
+              <el-dropdown-item>{{ $t('avatar.homePage') }}</el-dropdown-item>
             </router-link>
             <router-link to="/system/account">
-              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item>{{ $t('avatar.personalCenter') }}</el-dropdown-item>
             </router-link>
-            <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
+            <el-dropdown-item divided @click="logout">{{ $t('avatar.loginOut') }}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>

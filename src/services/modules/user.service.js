@@ -1,3 +1,9 @@
+/*
+ * @Author       : wzx 953579022@qq.com
+ * @Date         : 2023-05-30 23:06:23
+ * @LastEditors  : wzx 953579022@qq.com
+ * @LastEditTime : 2023-06-02 13:34:42
+ */
 import BaseService from './../base.service';
 
 export class userService extends BaseService {
@@ -22,7 +28,7 @@ export class userService extends BaseService {
   }
 
   static async resetUserApi(postData) {
-    return BaseService.post('/user/resetUser', postData);
+    return BaseService.get('/user/resetUser', postData);
   }
 
   static async changePwdApi(postData) {

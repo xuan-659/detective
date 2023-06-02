@@ -10,10 +10,6 @@ export class LoginService extends BaseService {
   static async loginApi(postData) {
     console.log('postData', postData);
     // return BaseService.post('/admin/login', postData);
-    return BaseService.post('/user/login', postData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return BaseService.post('/user/login', postData);
   }
 }
