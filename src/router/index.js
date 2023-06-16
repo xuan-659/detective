@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 22:44:27
+ * @LastEditTime : 2023-06-03 01:44:34
  */
 import { createRouter, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
@@ -86,6 +86,13 @@ router.beforeEach(async (to, from, next) => {
         let menusList = ['account', 'access', 'role', 'detection'];
         if (store.getters.userInfo.userType == 0) {
           menusList.push('user');
+        }
+        if (store.getters.userInfo.userType == 1) {
+          try {
+            router.removeRoute('user');
+          } catch (e) {
+            console.log(e);
+          }
         }
         const filterRoutes = await store.dispatch('menu/filterRoutes', menusList);
         // 利用 addRoute 循环添加

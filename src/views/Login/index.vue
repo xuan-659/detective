@@ -64,8 +64,8 @@
   import { useI18n } from 'vue-i18n';
   import { ElMessage } from 'element-plus';
   const loginForm = ref({
-    username: 'admin',
-    password: '123456',
+    username: '',
+    password: '',
   });
 
   const loading = ref(false);

@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 17:35:04
+ * @LastEditTime : 2023-06-03 07:56:35
 -->
 
 <template>
@@ -57,7 +57,7 @@
       <el-collapse>
         <template v-for="(v, index) in selectRes" :key="index">
           <el-collapse-item v-if="v.length !== 0" :title="getTitle(v)">
-            <li v-for="s in v" :key="s.id"> 第{{ s.row }}行：{{ s.summary }} </li>
+            <li v-for="s in v" :key="s.id"> 第{{ s.row + 3 }}行：{{ s.summary }} </li>
           </el-collapse-item>
         </template>
       </el-collapse>
@@ -67,6 +67,7 @@
       ref="dialogFormRef"
       :title="$t('detection.seekKeywords')"
       :confirmBtnText="$t('detection.seek')"
+      :cancelBtnText="$t('userManage.cancel')"
       :formFields="formFields"
       :formData="formData"
       @confirm="confirm"
@@ -159,6 +160,7 @@
   // TODO 文件完整性不合格校验
   // const analyseRes = false;
   const analyse = () => {
+    analyseText.value = '';
     if (!submitFlag.value) {
       ElMessage.error(i18n.t('detection.emptyError'));
       return false;
@@ -182,7 +184,7 @@
   const selectRes = ref([[], [], []]);
   const select = (keyWords) => {
     console.log('keyWords', keyWords);
-
+    selectRes.value = [[], [], []];
     store
       .dispatch('upload/selectMsg', {
         fileName: fileName.value,

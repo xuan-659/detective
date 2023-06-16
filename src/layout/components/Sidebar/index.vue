@@ -17,9 +17,20 @@
   import SidebarMenu from './components/SidebarMenu';
   import { useStore } from 'vuex';
   import { defaultImageUrl } from '@/constant/index';
+  import { ref } from 'vue';
   const logoHeight = 34;
   const store = useStore();
-  const squareUrl = store.getters?.userInfo?.avatar || defaultImageUrl;
+  // const squareUrl = store.getters?.userInfo?.avatar || defaultImageUrl;
+  const userInfo = ref({
+    avatar: defaultImageUrl,
+  });
+
+  const squareUrl = ref();
+  // squareUrl.value = defaultImageUrl;
+  store.dispatch('user/getUserInfo').then((res) => {
+    userInfo.value = res;
+    squareUrl.value = userInfo.value.avatar;
+  });
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-01 23:17:16
+ * @LastEditTime : 2023-06-02 21:47:09
 -->
 <template>
   <div class="navbar">
@@ -47,8 +47,19 @@
   import ThemeSelect from '@/components/ThemeSelect';
   import Screenfull from '@/components/Screenfull';
   import { defaultImageUrl } from '@/constant/index';
+  import { ref } from 'vue';
   const store = useStore();
-  const squareUrl = store.getters?.userInfo?.avatar || defaultImageUrl;
+  const userInfo = ref({
+    avatar: defaultImageUrl,
+  });
+
+  const squareUrl = ref();
+  // squareUrl.value = defaultImageUrl;
+  store.dispatch('user/getUserInfo').then((res) => {
+    userInfo.value = res;
+    squareUrl.value = userInfo.value.avatar;
+  });
+
   const logout = () => {
     store.dispatch('app/clearTagsView');
     store.dispatch('user/logout');

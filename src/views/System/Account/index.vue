@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 16:22:49
+ * @LastEditTime : 2023-06-03 07:57:21
 -->
 <template>
   <div>{{ $t('userInfo.setting') }}</div>
@@ -33,6 +33,7 @@
       :validate-event="false"
       :title="$t('userInfo.changePwd')"
       :confirmBtnText="$t('userInfo.confirm')"
+      :cancelBtnText="$t('userManage.cancel')"
       :formFields="formFields"
       :formData="formData"
       @valid="valid"
@@ -103,9 +104,9 @@
   };
   const validatePass2 = (rule, value, callback) => {
     if (value === '') {
-      callback(new Error(i18n.t('userInfp.pwdError')));
+      callback(new Error(i18n.t('userInfo.pwdError')));
     } else if (value !== formData.newPwd) {
-      callback(new Error(i18n.t('userInfp.repeatError')));
+      callback(new Error(i18n.t('userInfo.repeatError')));
     } else {
       callback();
     }

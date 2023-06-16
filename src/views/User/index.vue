@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 19:27:32
+ * @LastEditTime : 2023-06-03 07:57:26
 -->
 <template>
   <div style="height: 1000px"
@@ -32,6 +32,7 @@
       ref="dialogFormRef"
       :title="$t('userManage.registUser')"
       :confirmBtnText="$t('userInfo.confirm')"
+      :cancelBtnText="$t('userManage.cancel')"
       :formFields="formFields"
       :formData="formData"
       :rules="registrules"
@@ -43,6 +44,7 @@
       ref="dialogFormRef2"
       :title="$t('userManage.changeUser')"
       :confirmBtnText="$t('userManage.change')"
+      :cancelBtnText="$t('userManage.cancel')"
       :formFields="formFields2"
       :formData="formData2"
       :rules="rules2"
@@ -125,7 +127,7 @@
       },
       {
         prop: 'userName',
-        label: i18n.t('roleInfo.userNmae'),
+        label: i18n.t('roleInfo.userName'),
       },
       {
         prop: 'nickName',
@@ -249,7 +251,7 @@
   const formFields2 = reactive([
     {
       prop: 'userName',
-      label: i18n.t('roleInfo.userNmae'),
+      label: i18n.t('roleInfo.userName'),
     },
     {
       prop: 'nickName',
@@ -313,7 +315,8 @@
   const confirm2 = (userInfo) => {
     if (userInfo.sex == i18n.t('roleInfo.man')) userInfo.sex = '0';
     if (userInfo.sex == i18n.t('roleInfo.woman')) userInfo.sex = '1';
-    if (userInfo.userType == i18n.t('roleInfo.administrator')) userInfo.userType = '0';
+    console.log(userInfo.userType, i18n.t('userInfo.administrator'));
+    if (userInfo.userType == i18n.t('userInfo.administrator')) userInfo.userType = '0';
     if (userInfo.userType == i18n.t('roleInfo.user')) userInfo.userType = '1';
     updateUser(userInfo);
   };

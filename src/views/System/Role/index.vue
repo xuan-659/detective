@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 16:36:35
+ * @LastEditTime : 2023-06-03 00:25:42
 -->
 <template>
   <div>{{ $t('roleInfo.setting') }}</div>
@@ -23,7 +23,7 @@
       <div class="desc"> {{ $t('roleInfo.support') }} </div>
     </div>
     <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="120px">
-      <el-form-item :label="$t('roleInfo.userNmae')">
+      <el-form-item :label="$t('roleInfo.userName')">
         <el-input v-model="form.userName" disabled />
       </el-form-item>
       <el-form-item :label="$t('roleInfo.nickName')" prop="nickName">
@@ -64,7 +64,7 @@
     await formEl.validate((valid, fields) => {
       if (valid) {
         userInfo.nickName = form.nickName;
-        userInfo.sex = form.sex == i18n.t('roleInfo.man') ? '0' : '1';
+        userInfo.sex = form.sex;
         store.dispatch('user/updateUser', userInfo);
       } else {
         ElMessage.error(fields.nickName[0].message);
@@ -91,7 +91,8 @@
     console.log(uploadFile);
     if (!validateImage(uploadFile.raw)) return false;
     imageUrl.value = URL.createObjectURL(uploadFile.raw);
-    store.dispatch('user/avatar', uploadFile);
+    store.getters.userInfo.avatar = imageUrl.value;
+    store.dispatch('user/avatar', { avatar: uploadFile.raw, url: imageUrl.value }).then();
   };
 </script>
 

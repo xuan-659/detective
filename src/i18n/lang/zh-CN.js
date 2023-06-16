@@ -77,6 +77,7 @@ export default {
     resetUser: '重置密码',
     resetInfo: '重置密码为123456',
     change: '修改',
+    cancel: '取消',
     serial: '序号',
     emptyText: '无数据',
     password: '密码',

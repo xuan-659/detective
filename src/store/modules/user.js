@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 19:13:12
+ * @LastEditTime : 2023-06-03 00:29:29
  */
 import { setTimeStamp } from '@/utils/auth';
 import { LoginService, userService } from '@/services';
@@ -27,6 +27,9 @@ export default {
     updateUserInfo(state, userInfo) {
       state.userInfo = Object.assign(state.userInfo, userInfo);
     },
+    setAvatar(state, url) {
+      state.userInfo.avatar = url;
+    },
   },
   actions: {
     // 登录逻辑
@@ -43,7 +46,7 @@ export default {
             console.log('data', data);
             const { result } = data;
             commit('setToken', result.token);
-            commit('setUserInfo', result);
+            // commit('setUserInfo', result);
             // 保存登录时间(用于做主动退出)
             setTimeStamp();
             resolve();
@@ -86,13 +89,14 @@ export default {
 
     // 获取用户信息
     getUserInfo({ commit }) {
-      return new Promise(() => {
+      return new Promise((reslove) => {
         userService.getUserInfoApi().then((data) => {
           const { userInfo } = data?.result;
           const prefix = process.env.VUE_APP_API_URL;
           userInfo.avatar = prefix + userInfo.avatar;
           console.log('===', userInfo);
           commit('setUserInfo', userInfo);
+          reslove(userInfo);
         });
       });
       // commit('setUserInfo', {});
@@ -175,13 +179,15 @@ export default {
       // commit('setUserInfo', {});
     },
 
-    avatar(commit, file) {
+    avatar({ commit }, data) {
+      const { avatar, url } = data;
       return new Promise((resolve) => {
         userService
           .avatarApi({
-            file,
+            avatar,
           })
           .then((data) => {
+            commit('setAvatar', url);
             const { result } = data;
             resolve(result);
           });

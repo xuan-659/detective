@@ -2,7 +2,7 @@
  * @Author       : wzx 953579022@qq.com
  * @Date         : 2023-05-12 14:07:44
  * @LastEditors  : wzx 953579022@qq.com
- * @LastEditTime : 2023-06-02 17:32:38
+ * @LastEditTime : 2023-06-03 07:53:37
  */
 export default {
   msg: {
@@ -70,7 +70,7 @@ export default {
     setting: 'personal information',
     myAvatar: 'My icon',
     support: 'Support jpg, png, jpeg format images within 2M',
-    userNmae: 'usernmae',
+    userName: 'username',
     nickName: 'nickname',
     sex: 'gender',
     sexPlaceholder: 'Please select gender',
@@ -87,6 +87,7 @@ export default {
     resetUser: 'reset Password',
     resetInfo: 'Reset password to 123456',
     change: 'change',
+    cancel: 'cancel',
     serial: 'serial',
     emptyText: 'no data',
     password: 'password',
